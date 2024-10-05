@@ -14,6 +14,9 @@ import ru.sokolovskiy.restservice.Model.Request;
 import ru.sokolovskiy.restservice.Model.Response;
 import ru.sokolovskiy.restservice.Service.ValidationService;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 @RestController
 public class MyController {
 
@@ -27,10 +30,12 @@ public class MyController {
     @PostMapping(value = "/feedback")
     public ResponseEntity<Response> feedback(@Valid @RequestBody Request request, BindingResult bindingResult) {
 
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+
         Response response = Response.builder()
                 .uid(request.getUid())
                 .operationUid(request.getOperationUid())
-                .systemTime(request.getSystemTime())
+                .systemTime(simpleDateFormat.format(new Date()))
                 .code("Success")
                 .errorCode("")
                 .errorMessage("")
@@ -42,7 +47,7 @@ public class MyController {
         } catch (ValidationFailedException e) {
             response.setCode("failed");
             response.setErrorCode("ValidationException");
-            response.setErrorMessage("Произошла непредвиденная ошибка");
+            response.setErrorMessage(bindingResult.getAllErrors().get(0).getDefaultMessage());
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             response.setCode("failed");

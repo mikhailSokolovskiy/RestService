@@ -1,5 +1,6 @@
 package ru.sokolovskiy.restservice.Model;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Data;
 

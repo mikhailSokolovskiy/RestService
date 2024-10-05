@@ -4,8 +4,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 import ru.sokolovskiy.restservice.Exception.ValidationFailedException;
 
-import java.util.Objects;
-
 @Service
 public class RequestValidationService implements ValidationService {
 
