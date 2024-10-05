@@ -44,6 +44,12 @@ public class MyController {
 
         try {
             validationService.isValid(bindingResult);
+            if (request.getUid().equals("123")) {
+                response.setCode("failed");
+                response.setErrorCode("ValidationException");
+                response.setErrorMessage("Uid не может быть 123");
+                return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+            }
         } catch (ValidationFailedException e) {
             response.setCode("failed");
             response.setErrorCode("ValidationException");
