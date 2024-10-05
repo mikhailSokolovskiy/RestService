@@ -9,9 +9,11 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import ru.sokolovskiy.restservice.Exception.UnsupportedCodeException;
 import ru.sokolovskiy.restservice.Exception.ValidationFailedException;
 import ru.sokolovskiy.restservice.Model.Request;
 import ru.sokolovskiy.restservice.Model.Response;
+import ru.sokolovskiy.restservice.Service.UnsupportedCodeService;
 import ru.sokolovskiy.restservice.Service.ValidationService;
 
 import java.text.SimpleDateFormat;
@@ -21,10 +23,12 @@ import java.util.Date;
 public class MyController {
 
     private final ValidationService validationService;
+    private final UnsupportedCodeService unsupportedCodeService;
 
     @Autowired
-    public MyController(ValidationService validationService) {
+    public MyController(ValidationService validationService, UnsupportedCodeService unsupportedCodeService) {
         this.validationService = validationService;
+        this.unsupportedCodeService = unsupportedCodeService;
     }
 
     @PostMapping(value = "/feedback")
@@ -41,19 +45,18 @@ public class MyController {
                 .errorMessage("")
                 .build();
 
-
         try {
             validationService.isValid(bindingResult);
-            if (request.getUid().equals("123")) {
-                response.setCode("failed");
-                response.setErrorCode("ValidationException");
-                response.setErrorMessage("Uid не может быть 123");
-                return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-            }
+            unsupportedCodeService.isValid(bindingResult);
         } catch (ValidationFailedException e) {
             response.setCode("failed");
             response.setErrorCode("ValidationException");
             response.setErrorMessage(bindingResult.getAllErrors().get(0).getDefaultMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        } catch (UnsupportedCodeException e) {
+            response.setCode("failed");
+            response.setErrorCode("UnsupportedCodeException");
+            response.setErrorMessage(e.getMessage());
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             response.setCode("failed");
