@@ -17,6 +17,4 @@ public class UnsupportedCodeService implements UnsupportedService {
             throw new UnsupportedCodeException("Uid не может быть 123");
         }
     }
-
-
 }
