@@ -6,6 +6,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -20,7 +22,7 @@ public class Request {
     @Size(max = 32, message = "operationUid не должно быть больше 32 символов")
     private String operationUid;
 
-    private Systems systemName;
+    private String systemName;
     private String systemTime;
     private String source;
 
@@ -31,6 +33,9 @@ public class Request {
     private int templateId;
     private int productCode;
     private int smsCode;
+
+
+    private LocalDateTime requestTime;
 
     @Override
     public String toString() {
@@ -44,6 +49,7 @@ public class Request {
                 ", templateId=" + templateId +
                 ", productCode=" + productCode +
                 ", smsCode=" + smsCode +
+                ", requestTime=" + requestTime +
                 '}';
     }
 

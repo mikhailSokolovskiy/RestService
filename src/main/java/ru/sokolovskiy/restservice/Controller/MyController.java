@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.sokolovskiy.restservice.Exception.UnsupportedCodeException;
 import ru.sokolovskiy.restservice.Exception.ValidationFailedException;
 import ru.sokolovskiy.restservice.Model.*;
+import ru.sokolovskiy.restservice.Service.ModifyRequestService;
 import ru.sokolovskiy.restservice.Service.ModifyResponseService;
 import ru.sokolovskiy.restservice.Service.UnsupportedCodeService;
 import ru.sokolovskiy.restservice.Service.ValidationService;
@@ -30,16 +31,20 @@ public class MyController {
 
     private final ModifyResponseService modifyResponseService;
 
+    private final ModifyRequestService modifyRequestService;
+
     @Autowired
     public MyController(ValidationService validationService, UnsupportedCodeService unsupportedCodeService,
-                        @Qualifier("ModifySystemTimeResponseService")ModifyResponseService modifyResponseService) {
+                        @Qualifier("ModifySystemTimeResponseService")ModifyResponseService modifyResponseService, ModifyRequestService modifyRequestService) {
         this.validationService = validationService;
         this.unsupportedCodeService = unsupportedCodeService;
         this.modifyResponseService = modifyResponseService;
+        this.modifyRequestService = modifyRequestService;
     }
 
     @PostMapping(value = "/feedback")
-    public ResponseEntity<Response> feedback(@Valid @RequestBody Request request, BindingResult bindingResult) {
+    public ResponseEntity<Response> feedback(@Valid @RequestBody Request request,
+                                             BindingResult bindingResult) {
 
         log.info("request: {}", request);
 
@@ -107,6 +112,9 @@ public class MyController {
         }
 
         modifyResponseService.modify(response);
+
+        modifyRequestService.modify(request);
+
         log.info("Response modified by ModifyResponseService: {}", response);
 
         return new ResponseEntity<>(modifyResponseService.modify(response), HttpStatus.OK);
